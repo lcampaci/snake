@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xadrez PWA</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Biblioteca de xadrez -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.min.js"></script>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- TOP -->
+  <header>
+    <h1>♟ Xadrez</h1>
+    <div id="timer">00:00</div>
+  </header>
+
+  <!-- TABULEIRO -->
+  <div id="board"></div>
+
+  <!-- MENU MOBILE -->
+  <nav id="bottomMenu">
+    <button onclick="newGame()">Novo</button>
+    <button onclick="toggleTheme()">Tema</button>
+    <button onclick="changeDifficulty()">Nível</button>
+    <button onclick="saveGame()">Salvar</button>
+  </nav>
+
+  <!-- MODAL RANKING -->
+  <div id="rankingModal" class="hidden">
+    <h2>Ranking</h2>
+    <ul id="rankingList"></ul>
+    <input type="text" id="playerName" placeholder="Seu nome">
+    <button onclick="saveScore()">Salvar</button>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
