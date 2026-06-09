@@ -42,9 +42,11 @@ function renderBoard() {
       div.className = "square " + ((i + j) % 2 ? "dark" : "light");
 
       if (square) {
-        div.innerText = pieces[square.color === 'w'
+       const pieceKey = square.color === 'w'
           ? square.type.toUpperCase()
-          : square.type];
+          : square.type;
+      
+          div.innerText = pieces[pieceKey];
       }
 
       div.onclick = () => onClick(i, j);
@@ -138,7 +140,7 @@ function changeDifficulty() {
 }
 
 // 🔄 carregar
-window.onload = () => {
-  renderBoard();
+window.addEventListener("DOMContentLoaded", () => {
+  newGame();
   loadRanking();
-};
+});
