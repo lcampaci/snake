@@ -1,6 +1,6 @@
 let board;
 let game = new Chess();
-let stockfish = new Worker("stockfish.js");
+let stockfish = new Worker("https://cdn.jsdelivr.net/npm/stockfish/stockfish.js");
 
 let level = 10;
 
