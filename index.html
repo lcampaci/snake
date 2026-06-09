@@ -1,46 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Xadrez PWA</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
+<title>Xadrez PRO</title>
 
-  <!-- Biblioteca de xadrez -->
-  <script src="https://cdn.jsdelivr.net/npm/chess.js@0.13.4/chess.min.js"></script>
+<link rel="stylesheet" href="style.css">
+
+<!-- Chessboard -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+
 </head>
+
 <body>
 
-<div id="app">
+<header>
+  <h2>♟ Xadrez PRO</h2>
+  <div id="status">Sua vez</div>
+</header>
 
-  <!-- TOP -->
-  <header>
-    <h1>♟ Xadrez</h1>
-    <div id="timer">00:00</div>
-  </header>
+<div id="board"></div>
 
-  <!-- TABULEIRO -->
-  <div id="board"></div>
+<nav class="menu">
+  <button onclick="newGame()">Novo</button>
+  <button onclick="toggleTheme()">Tema</button>
+  <button onclick="setLevel(5)">Fácil</button>
+  <button onclick="setLevel(10)">Médio</button>
+  <button onclick="setLevel(18)">Difícil</button>
+</nav>
 
-  <!-- MENU MOBILE -->
-  <nav id="bottomMenu">
-    <button onclick="newGame()">Novo</button>
-    <button onclick="toggleTheme()">Tema</button>
-    <button onclick="changeDifficulty()">Nível</button>
-    <button onclick="saveGame()">Salvar</button>
-  </nav>
-
-  <!-- MODAL RANKING -->
-  <div id="rankingModal" class="hidden">
-    <h2>Ranking</h2>
-    <ul id="rankingList"></ul>
-    <input type="text" id="playerName" placeholder="Seu nome">
-    <button onclick="saveScore()">Salvar</button>
-  </div>
-
-</div>
+<!-- libs -->
+<script src="https://cdn.jsdelivr.net/npm/chess.js@0.13.4/chess.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
 
 <script src="app.js"></script>
 </body>
