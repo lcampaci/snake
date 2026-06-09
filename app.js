@@ -1,146 +1,92 @@
-const game = new Chess();
+let board;
+let game = new Chess();
+let stockfish = new Worker("stockfish.js");
 
-let selected = null;
-let difficulty = 1;
-let timer = 0;
-let interval;
+let level = 10;
 
-const boardEl = document.getElementById("board");
+// 🎯 iniciar tabuleiro
+function init() {
+  board = Chessboard('board', {
+    draggable: true,
+    position: 'start',
+    onDrop: onDrop,
+    onSnapEnd: () => board.position(game.fen())
+  });
+}
 
-// ♟ peças unicode
-const pieces = {
-  p: "♟", r: "♜", n: "♞", b: "♝", q: "♛", k: "♚",
-  P: "♙", R: "♖", N: "♘", B: "♗", Q: "♕", K: "♔"
+function onDrop(source, target) {
+  let move = game.move({
+    from: source,
+    to: target,
+    promotion: 'q'
+  });
+
+  if (move === null) return 'snapback';
+
+  updateStatus();
+  setTimeout(makeAI, 300);
+}
+
+// 🤖 IA com Stockfish
+function makeAI() {
+  stockfish.postMessage("position fen " + game.fen());
+  stockfish.postMessage("go depth " + level);
+}
+
+stockfish.onmessage = function (event) {
+  if (event.data.startsWith("bestmove")) {
+    let move = event.data.split(" ")[1];
+
+    game.move({
+      from: move.substring(0, 2),
+      to: move.substring(2, 4),
+      promotion: 'q'
+    });
+
+    board.position(game.fen());
+    updateStatus();
+  }
 };
 
-// 🔁 iniciar
+// 📊 status
+function updateStatus() {
+  let status = "";
+
+  if (game.in_checkmate()) {
+    status = "Xeque-mate!";
+    animateEnd();
+  } else if (game.in_check()) {
+    status = "Xeque!";
+  } else {
+    status = "Jogando...";
+  }
+
+  document.getElementById("status").innerText = status;
+}
+
+// ✨ animação final
+function animateEnd() {
+  document.body.style.background = "red";
+  setTimeout(() => {
+    document.body.style.background = "#111";
+  }, 500);
+}
+
+// 🎮 novo jogo
 function newGame() {
   game.reset();
-  timer = 0;
-  renderBoard();
-  startTimer();
+  board.start();
 }
 
-// ⏱ timer
-function startTimer() {
-  clearInterval(interval);
-  interval = setInterval(() => {
-    timer++;
-    document.getElementById("timer").innerText =
-      new Date(timer * 1000).toISOString().substr(14, 5);
-  }, 1000);
-}
-
-// 🎯 render
-function renderBoard() {
-  boardEl.innerHTML = "";
-  const board = game.board();
-
-  board.forEach((row, i) => {
-    row.forEach((square, j) => {
-      const div = document.createElement("div");
-      div.className = "square " + ((i + j) % 2 ? "dark" : "light");
-
-      if (square) {
-       const pieceKey = square.color === 'w'
-          ? square.type.toUpperCase()
-          : square.type;
-      
-          div.innerText = pieces[pieceKey];
-      }
-
-      div.onclick = () => onClick(i, j);
-      boardEl.appendChild(div);
-    });
-  });
-}
-
-// 👆 clique
-function onClick(i, j) {
-  if (navigator.vibrate) navigator.vibrate(50);
-
-  const square = "abcdefgh"[j] + (8 - i);
-
-  if (!selected) {
-    selected = square;
-  } else {
-    game.move({ from: selected, to: square });
-    selected = null;
-    renderBoard();
-    setTimeout(aiMove, 300);
-  }
-}
-
-// 🤖 IA simples
-function aiMove() {
-  const moves = game.moves();
-  if (moves.length === 0) return endGame();
-
-  let move;
-
-  if (difficulty === 1) {
-    move = moves[Math.floor(Math.random() * moves.length)];
-  } else if (difficulty === 2) {
-    move = moves[0];
-  } else {
-    move = moves[moves.length - 1];
-  }
-
-  game.move(move);
-  renderBoard();
-
-  if (game.game_over()) endGame();
-}
-
-// 🏁 fim
-function endGame() {
-  alert("Fim de jogo!");
-  document.getElementById("rankingModal").classList.remove("hidden");
-}
-
-// 💾 salvar partida
-function saveGame() {
-  localStorage.setItem("chess-save", game.fen());
-  alert("Salvo!");
-}
-
-// 🏆 ranking
-function saveScore() {
-  const name = document.getElementById("playerName").value;
-  const ranking = JSON.parse(localStorage.getItem("ranking") || "[]");
-
-  ranking.push({ name, time: timer });
-  ranking.sort((a, b) => a.time - b.time);
-
-  localStorage.setItem("ranking", JSON.stringify(ranking));
-  loadRanking();
-}
-
-function loadRanking() {
-  const ranking = JSON.parse(localStorage.getItem("ranking") || "[]");
-  const list = document.getElementById("rankingList");
-  list.innerHTML = "";
-
-  ranking.forEach(r => {
-    const li = document.createElement("li");
-    li.innerText = `${r.name} - ${r.time}s`;
-    list.appendChild(li);
-  });
+// 🎚 nível
+function setLevel(l) {
+  level = l;
+  alert("Nível: " + l);
 }
 
 // 🌗 tema
 function toggleTheme() {
-  document.body.classList.toggle("dark");
+  document.body.classList.toggle("light");
 }
 
-// 🎚 dificuldade
-function changeDifficulty() {
-  difficulty = (difficulty % 3) + 1;
-  alert("Dificuldade: " + ["Fácil", "Médio", "Difícil"][difficulty - 1]);
-}
-
-// 🔄 carregar
-window.addEventListener("DOMContentLoaded", () => {
-  newGame();
-  loadRanking();
-});
+window.onload = init;
