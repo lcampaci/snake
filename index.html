@@ -3,38 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
 
 <title>Xadrez PRO</title>
 
-<link rel="stylesheet" href="style.css">
-
-<!-- Chessboard -->
+<!-- CSS do tabuleiro (OBRIGATÓRIO) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
-<script src="https://cdn.jsdelivr.net/npm/stockfish/stockfish.js"></script>
+
+<style>
+body {
+  margin: 0;
+  background: #111;
+  color: white;
+  text-align: center;
+}
+
+#board {
+  width: 95vw;
+  max-width: 500px;
+  margin: 20px auto;
+}
+</style>
 </head>
 
 <body>
 
-<header>
-  <h2>♟ Xadrez PRO</h2>
-  <div id="status">Sua vez</div>
-</header>
+<h2>Xadrez</h2>
 
+<!-- IMPORTANTE: div precisa existir -->
 <div id="board"></div>
 
-<nav class="menu">
-  <button onclick="newGame()">Novo</button>
-  <button onclick="toggleTheme()">Tema</button>
-  <button onclick="setLevel(5)">Fácil</button>
-  <button onclick="setLevel(10)">Médio</button>
-  <button onclick="setLevel(18)">Difícil</button>
-</nav>
-
-<!-- libs -->
+<!-- ORDEM IMPORTA ⚠️ -->
 <script src="https://cdn.jsdelivr.net/npm/chess.js@0.13.4/chess.min.js"></script>
+
+<!-- jQuery (ESSENCIAL pro chessboard.js) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
 
 <script src="app.js"></script>
+
 </body>
 </html>
