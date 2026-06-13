@@ -1,6 +1,6 @@
 {
-  "name": "Xadrez PWA",
-  "short_name": "Xadrez",
+  "name": "Snake PWA",
+  "short_name": "Snake",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#000",
