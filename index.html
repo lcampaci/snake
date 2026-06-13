@@ -19,7 +19,13 @@ body {
   flex-direction: column;
   align-items: center;
 
-  padding-bottom: 220px; /* espaço pros controles */
+  /*padding-bottom: 220px;*/ /* espaço pros controles */
+  padding-bottom: 90px;
+}
+
+h1 {
+  margin: 5px 0;
+  font-size: 24px;
 }
 
 canvas {
@@ -29,8 +35,10 @@ canvas {
 }
 
 canvas {
-  max-width: 95vw;
-  max-height: 60vh;
+  /*max-width: 95vw;
+  max-height: 60vh;*/
+  max-width: 98vw;
+  max-height: 75vh; /* antes 60vh */
   touch-action: none;
   margin-bottom: 20px;
 }
@@ -49,7 +57,7 @@ canvas {
 
 .controls {
   position: fixed;
-  bottom: 10px;
+  bottom: 5px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -60,11 +68,16 @@ canvas {
 }
 
 button {
-  width: 70px;
+  /*width: 70px;
   height: 70px;
   font-size: 24px;
   margin: 5px;
-  border-radius: 15px;
+  border-radius: 15px;*/
+  width: 50px;
+  height: 50px;
+  font-size: 18px;
+  margin: 2px;
+  border-radius: 8px;
   background: #222;
   color: #0f0;
   border: 2px solid #0f0;
