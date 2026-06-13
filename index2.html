@@ -1,111 +1,165 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Snake PRO+</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Snake PRO+ v96</title>
 
 <style>
-html, body {
-  height: 100%;
-  overflow: hidden;
+
+html, body{
+    height:100%;
+    margin:0;
+    overflow:hidden;
 }
 
-body {
-  margin: 0;
-  background: #008080; /* desktop Windows */
-  font-family: Tahoma, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+body{
+    background:#008080;
+    font-family:Tahoma,sans-serif;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-/* Janela */
-.window {
-  background: #C0C0C0;
+/* JANELA */
 
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
+.window{
+    background:#C0C0C0;
 
-  box-shadow: 2px 2px 0 #000;
-  padding: 3px;
+    border-top:2px solid #fff;
+    border-left:2px solid #fff;
+    border-right:2px solid #404040;
+    border-bottom:2px solid #404040;
+
+    box-shadow:2px 2px 0 #000;
+
+    padding:3px;
+    max-width:95vw;
 }
 
-/* Barra de título */
-.titlebar {
-  background: linear-gradient(to right, #000080, #1084d0);
-  color: white;
-  padding: 4px 8px;
-  font-weight: bold;
-  font-size: 14px;
-  display: flex;
-  justify-content: space-between;
+/* BARRA DE TÍTULO */
+
+.titlebar{
+    background:linear-gradient(to right,#000080,#1084d0);
+    color:white;
+
+    padding:4px 8px;
+
+    font-size:14px;
+    font-weight:bold;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.title-buttons {
-  display: flex;
-  gap: 2px;
+.title-buttons{
+    display:flex;
+    gap:2px;
 }
 
-.title-buttons div {
-  width: 16px;
-  height: 14px;
-  background: #C0C0C0;
+.title-buttons div{
+    width:16px;
+    height:14px;
 
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
+    background:#C0C0C0;
+
+    border-top:1px solid #fff;
+    border-left:1px solid #fff;
+    border-right:1px solid #404040;
+    border-bottom:1px solid #404040;
 }
 
-.content {
-  padding: 10px;
+.content{
+    padding:10px;
 }
 
-canvas {
-  background: black;
-  border: 2px inset #808080;
+#hud{
+    margin-bottom:8px;
+    color:black;
+    font-weight:bold;
 }
 
-/* HUD */
-#hud {
-  margin-bottom: 8px;
-  color: black;
-  font-weight: bold;
+canvas{
+    background:black;
+    border:2px inset #808080;
+
+    max-width:90vw;
+    max-height:70vh;
+
+    touch-action:none;
 }
 
-/* Botões */
-button {
-  width: 50px;
-  height: 50px;
+/* STATUS */
 
-  background: #C0C0C0;
-  color: black;
+.statusbar{
+    margin-top:5px;
+    padding:3px;
 
-  border-top: 2px solid white;
-  border-left: 2px solid white;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-
-  font-size: 18px;
+    border:1px inset #808080;
+    font-size:12px;
 }
 
-button:active {
-  border-top: 2px solid #404040;
-  border-left: 2px solid #404040;
-  border-right: 2px solid white;
-  border-bottom: 2px solid white;
+/* MENSAGENS */
+
+#startMsg,
+#pauseMsg,
+#gameOver{
+    text-align:center;
+    margin-top:8px;
+    font-weight:bold;
 }
 
-/* Barra de status */
-.statusbar {
-  margin-top: 5px;
-  background: #C0C0C0;
-  border: 1px inset #808080;
-  padding: 3px;
-  font-size: 12px;
+#pauseMsg{
+    display:none;
+    color:#800000;
 }
+
+#gameOver{
+    display:none;
+    color:#800000;
+}
+
+/* CONTROLES MOBILE */
+
+.controls{
+    position:fixed;
+    bottom:10px;
+    left:0;
+    width:100%;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+button{
+
+    width:55px;
+    height:55px;
+
+    font-size:18px;
+
+    background:#C0C0C0;
+
+    border-top:2px solid white;
+    border-left:2px solid white;
+    border-right:2px solid #404040;
+    border-bottom:2px solid #404040;
+
+    margin:2px;
+}
+
+button:active{
+    border-top:2px solid #404040;
+    border-left:2px solid #404040;
+    border-right:2px solid white;
+    border-bottom:2px solid white;
+}
+
 </style>
 </head>
 
@@ -113,256 +167,425 @@ button:active {
 
 <div class="window">
 
-  <div class="titlebar">
-    <span>Snake PRO+ v96</span>
+    <div class="titlebar">
+        <span>🐍 Snake PRO+ v96</span>
 
-    <div class="title-buttons">
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-  </div>
-
-  <div class="content">
-
-    <div id="hud">
-      Score: <span id="score">0</span> |
-      Recorde: <span id="highscore">0</span>
+        <div class="title-buttons">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
     </div>
 
-    <canvas id="game" width="400" height="400"></canvas>
+    <div class="content">
 
-    <div class="statusbar">
-      Pronto | Espaço = Pause | Enter = Reiniciar
+        <div id="hud">
+            Score: <span id="score">0</span> |
+            Recorde: <span id="highscore">0</span>
+        </div>
+
+        <canvas id="game" width="400" height="400"></canvas>
+
+        <div id="startMsg">
+            Pressione uma seta para começar
+        </div>
+
+        <div id="pauseMsg">
+            ⏸ PAUSADO
+        </div>
+
+        <div id="gameOver">
+            💀 GAME OVER - ENTER para reiniciar
+        </div>
+
+        <div class="statusbar">
+            Pronto | Espaço = Pause | Enter = Reiniciar
+        </div>
+
     </div>
-
-  </div>
 
 </div>
 
+<div class="controls">
+    <div>
+        <button onclick="setDirection('up')">⬆️</button>
+    </div>
+
+    <div>
+        <button onclick="setDirection('left')">⬅️</button>
+        <button onclick="setDirection('down')">⬇️</button>
+        <button onclick="setDirection('right')">➡️</button>
+    </div>
+</div>
+
 <script>
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 const scoreEl = document.getElementById("score");
 const highEl = document.getElementById("highscore");
-const gameOverEl = document.getElementById("gameOver");
 
+const gameOverEl = document.getElementById("gameOver");
 const pauseMsg = document.getElementById("pauseMsg");
+const startMsg = document.getElementById("startMsg");
 
 const grid = 20;
 
-let snake, apple;
-let count, speed, score, gameRunning, paused;
+let snake;
+let apple;
+
+let count;
+let speed;
+let score;
+
+let gameRunning;
+let paused;
 let started = false;
 
-// 🔊 som simples
-function beep() {
-  const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
-  const osc = ctxAudio.createOscillator();
-  osc.connect(ctxAudio.destination);
-  osc.start();
-  osc.stop(ctxAudio.currentTime + 0.1);
+/* SOM */
+
+function beep(){
+
+    const audioCtx =
+        new(window.AudioContext ||
+        window.webkitAudioContext)();
+
+    const osc = audioCtx.createOscillator();
+
+    osc.frequency.value = 600;
+
+    osc.connect(audioCtx.destination);
+
+    osc.start();
+
+    osc.stop(audioCtx.currentTime + 0.08);
 }
 
-// 🏆 recorde
-let highscore = localStorage.getItem("snakeHigh") || 0;
+/* RECORDE */
+
+let highscore =
+    localStorage.getItem("snakeHigh") || 0;
+
 highEl.textContent = highscore;
 
-function resetGame() {
+/* RESET */
 
-  document.getElementById("startMsg").style.display = "block";
+function resetGame(){
 
-  snake = {
-    x: 160,
-    y: 160,
-    dx: 0,
-    dy: 0,
-    cells: [{ x: 160, y: 160 }],
-    maxCells: 4
-  };
+    snake = {
+        x:160,
+        y:160,
 
-  apple = {
-    x: 320,
-    y: 320
-  };
+        dx:0,
+        dy:0,
 
-  count = 0;
-  speed = 6;
-  score = 0;
-  gameRunning = true;
-  paused = false;
-  started = false;
+        cells:[{
+            x:160,
+            y:160
+        }],
 
-  scoreEl.textContent = 0;
-  gameOverEl.style.display = "none";
+        maxCells:4
+    };
+
+    apple = {
+        x:320,
+        y:320
+    };
+
+    count = 0;
+    speed = 6;
+
+    score = 0;
+
+    gameRunning = true;
+    paused = false;
+    started = false;
+
+    scoreEl.textContent = 0;
+
+    gameOverEl.style.display = "none";
+    pauseMsg.style.display = "none";
+    startMsg.style.display = "block";
 }
 
+/* RANDOM */
 
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
+function getRandomInt(min,max){
+    return Math.floor(
+        Math.random() * (max-min)
+    ) + min;
 }
 
-function loop() {
-  requestAnimationFrame(loop);
+/* GAME OVER */
 
-  if (!started) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function gameOver(){
 
-    // maçã
-    ctx.fillStyle = "red";
-    ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+    gameRunning = false;
 
-    // cobra parada
-    ctx.fillStyle = "#0f0";
-    ctx.fillRect(snake.x, snake.y, grid - 1, grid - 1);
+    if(score > highscore){
 
-    return;
-  }
+        highscore = score;
 
-  if (!gameRunning || paused) return;
+        localStorage.setItem(
+            "snakeHigh",
+            highscore
+        );
 
-  if (++count < speed) return;
-  count = 0;
-
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  snake.x += snake.dx;
-  snake.y += snake.dy;
-
-  // parede
-  if (
-    snake.x < 0 || snake.x >= canvas.width ||
-    snake.y < 0 || snake.y >= canvas.height
-  ) {
-    gameOver();
-  }
-
-  snake.cells.unshift({x: snake.x, y: snake.y});
-  if (snake.cells.length > snake.maxCells) {
-    snake.cells.pop();
-  }
-
-  // maçã
-  ctx.fillStyle = "red";
-  ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
-
-  // cobra
-  ctx.fillStyle = "#0f0";
-  snake.cells.forEach((cell, index) => {
-    ctx.fillRect(cell.x, cell.y, grid - 1, grid - 1);
-
-    // comer
-    if (cell.x === apple.x && cell.y === apple.y) {
-      snake.maxCells++;
-      score++;
-      scoreEl.textContent = score;
-
-      beep();
-
-      // aumenta velocidade
-      //if (speed > 2) speed--;
-	  
-	  // aumenta velocidade devagar
-	  speed = Math.max(3, 6 - Math.floor(score / 5));
-
-      apple.x = getRandomInt(0, 20) * grid;
-      apple.y = getRandomInt(0, 20) * grid;
+        highEl.textContent =
+            highscore;
     }
 
-    // colisão corpo
-    for (let i = index + 1; i < snake.cells.length; i++) {
-      if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+    gameOverEl.style.display =
+        "block";
+}
+
+/* LOOP */
+
+function loop(){
+
+    requestAnimationFrame(loop);
+
+    if(!started){
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        ctx.fillStyle = "red";
+        ctx.fillRect(
+            apple.x,
+            apple.y,
+            grid-1,
+            grid-1
+        );
+
+        ctx.fillStyle = "#00ff00";
+        ctx.fillRect(
+            snake.x,
+            snake.y,
+            grid-1,
+            grid-1
+        );
+
+        return;
+    }
+
+    if(!gameRunning || paused)
+        return;
+
+    if(++count < speed)
+        return;
+
+    count = 0;
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    snake.x += snake.dx;
+    snake.y += snake.dy;
+
+    if(
+        snake.x < 0 ||
+        snake.y < 0 ||
+        snake.x >= canvas.width ||
+        snake.y >= canvas.height
+    ){
         gameOver();
-      }
     }
-  });
+
+    snake.cells.unshift({
+        x:snake.x,
+        y:snake.y
+    });
+
+    if(
+        snake.cells.length >
+        snake.maxCells
+    ){
+        snake.cells.pop();
+    }
+
+    /* maçã */
+
+    ctx.fillStyle = "red";
+
+    ctx.fillRect(
+        apple.x,
+        apple.y,
+        grid-1,
+        grid-1
+    );
+
+    /* cobra */
+
+    ctx.fillStyle = "#00ff00";
+
+    snake.cells.forEach((cell,index)=>{
+
+        ctx.fillRect(
+            cell.x,
+            cell.y,
+            grid-1,
+            grid-1
+        );
+
+        if(
+            cell.x === apple.x &&
+            cell.y === apple.y
+        ){
+
+            snake.maxCells++;
+
+            score++;
+
+            scoreEl.textContent =
+                score;
+
+            beep();
+
+            speed = Math.max(
+                3,
+                6 - Math.floor(score/5)
+            );
+
+            apple.x =
+                getRandomInt(0,20)
+                * grid;
+
+            apple.y =
+                getRandomInt(0,20)
+                * grid;
+        }
+
+        for(
+            let i=index+1;
+            i<snake.cells.length;
+            i++
+        ){
+
+            if(
+                cell.x ===
+                snake.cells[i].x &&
+                cell.y ===
+                snake.cells[i].y
+            ){
+                gameOver();
+            }
+        }
+    });
 }
 
-document.addEventListener("touchmove", function(e) {
-  e.preventDefault();
-}, { passive: false });
+/* TECLADO */
 
-function gameOver() {
-  gameRunning = false;
+document.addEventListener(
+    "keydown",
+    e=>{
 
-  // salva recorde
-  if (score > highscore) {
-    highscore = score;
-    localStorage.setItem("snakeHigh", highscore);
-    highEl.textContent = highscore;
-  }
+        if(
+            [
+                "ArrowUp",
+                "ArrowDown",
+                "ArrowLeft",
+                "ArrowRight"
+            ].includes(e.key)
+        ){
+            e.preventDefault();
+        }
 
-  gameOverEl.style.display = "block";
+        if(e.code==="Space"){
+
+            e.preventDefault();
+
+            paused = !paused;
+
+            pauseMsg.style.display =
+                paused
+                ? "block"
+                : "none";
+        }
+
+        if(
+            !gameRunning &&
+            e.key==="Enter"
+        ){
+            resetGame();
+            return;
+        }
+
+        handleDirection(e.key);
+    }
+);
+
+/* MOBILE */
+
+function setDirection(dir){
+
+    const map = {
+
+        up:"ArrowUp",
+        down:"ArrowDown",
+        left:"ArrowLeft",
+        right:"ArrowRight"
+    };
+
+    handleDirection(map[dir]);
 }
 
-// teclado
-document.addEventListener("keydown", (e) => {
+/* DIREÇÃO */
 
-  if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
-    e.preventDefault();
-  }
-  
-  // ⏸️ PAUSE COM ESPAÇO
-  if (e.code === "Space") {
-    e.preventDefault();
-    paused = !paused;
-    pauseMsg.style.display = paused ? "block" : "none";
-  }
+function handleDirection(key){
 
-  if (!gameRunning && e.key === "Enter") {
-    resetGame();
-    return;
-  }
+    started = true;
 
-  handleDirection(e.key);
-});
+    startMsg.style.display =
+        "none";
 
-// mobile
-function setDirection(dir) {
-  if (!gameRunning) {
-    resetGame();
-    return;
-  }
+    if(
+        key==="ArrowLeft" &&
+        snake.dx!==grid
+    ){
+        snake.dx = -grid;
+        snake.dy = 0;
+    }
 
-  const map = {
-    up: "ArrowUp",
-    down: "ArrowDown",
-    left: "ArrowLeft",
-    right: "ArrowRight"
-  };
+    else if(
+        key==="ArrowRight" &&
+        snake.dx!==-grid
+    ){
+        snake.dx = grid;
+        snake.dy = 0;
+    }
 
-  handleDirection(map[dir]);
-}
+    else if(
+        key==="ArrowUp" &&
+        snake.dy!==grid
+    ){
+        snake.dx = 0;
+        snake.dy = -grid;
+    }
 
-function handleDirection(key) {
-
-  started = true;
-  document.getElementById("startMsg").style.display = "none";
-
-  if (key === "ArrowLeft" && snake.dx !== grid) {
-    snake.dx = -grid;
-    snake.dy = 0;
-  }
-  else if (key === "ArrowUp" && snake.dy !== grid) {
-    snake.dx = 0;
-    snake.dy = -grid;
-  }
-  else if (key === "ArrowRight" && snake.dx !== -grid) {
-    snake.dx = grid;
-    snake.dy = 0;
-  }
-  else if (key === "ArrowDown" && snake.dy !== -grid) {
-    snake.dx = 0;
-    snake.dy = grid;
-  }
+    else if(
+        key==="ArrowDown" &&
+        snake.dy!==-grid
+    ){
+        snake.dx = 0;
+        snake.dy = grid;
+    }
 }
 
 resetGame();
 requestAnimationFrame(loop);
+
 </script>
 
 </body>
 </html>
+```
