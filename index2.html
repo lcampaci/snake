@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Snake PRO+</title>
+
+<style>
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  background: #111;
+  color: #0f0;
+  font-family: monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /*padding-bottom: 220px;*/ /* espaço pros controles */
+  padding-bottom: 90px;
+}
+
+h1 {
+  margin: 5px 0;
+  font-size: 24px;
+}
+
+canvas {
+  background: black;
+  border: 3px solid #0f0;
+  margin-top: 10px;
+}
+
+canvas {
+  /*max-width: 95vw;
+  max-height: 60vh;*/
+  max-width: 98vw;
+  max-height: 75vh; /* antes 60vh */
+  touch-action: none;
+  margin-bottom: 20px;
+}
+
+
+#hud {
+  margin-top: 10px;
+}
+
+#gameOver {
+  position: absolute;
+  top: 40%;
+  text-align: center;
+  display: none;
+}
+
+.controls {
+  position: fixed;
+  bottom: 5px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+
+  pointer-events: auto;
+}
+
+button {
+  /*width: 70px;
+  height: 70px;
+  font-size: 24px;
+  margin: 5px;
+  border-radius: 15px;*/
+  width: 50px;
+  height: 50px;
+  font-size: 18px;
+  margin: 2px;
+  border-radius: 8px;
+  background: #222;
+  color: #0f0;
+  border: 2px solid #0f0;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🐍 Snake PRO+</h1>
+
+<div id="hud">
+  Score: <span id="score">0</span> |
+  Recorde: <span id="highscore">0</span>
+</div>
+
+<canvas id="game" width="400" height="400"></canvas>
+
+<div id="startMsg" style="
+position:absolute;
+top:45%;
+font-size:22px;
+color:#0f0;
+">
+Pressione alguma seta para começar
+</div>
+
+<div id="gameOver">
+  <h2>💀 Game Over</h2>
+  <p>Pressione ENTER ou toque para reiniciar</p>
+</div>
+
+<div id="pauseMsg" style="display:none; position:absolute; top:45%;">
+  <h2>⏸️ PAUSADO</h2>
+</div>
+
+<!-- Controles mobile -->
+<div class="controls">
+  <div>
+    <button ontouchstart="setDirection('up')" onclick="setDirection('up')">⬆️</button>
+  </div>
+  <div>
+    <button ontouchstart="setDirection('left')" onclick="setDirection('left')">⬅️</button>
+    <button ontouchstart="setDirection('down')" onclick="setDirection('down')">⬇️</button>
+    <button ontouchstart="setDirection('right')" onclick="setDirection('right')">➡️</button>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const scoreEl = document.getElementById("score");
+const highEl = document.getElementById("highscore");
+const gameOverEl = document.getElementById("gameOver");
+
+const pauseMsg = document.getElementById("pauseMsg");
+
+const grid = 20;
+
+let snake, apple;
+let count, speed, score, gameRunning, paused;
+let started = false;
+
+// 🔊 som simples
+function beep() {
+  const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctxAudio.createOscillator();
+  osc.connect(ctxAudio.destination);
+  osc.start();
+  osc.stop(ctxAudio.currentTime + 0.1);
+}
+
+// 🏆 recorde
+let highscore = localStorage.getItem("snakeHigh") || 0;
+highEl.textContent = highscore;
+
+function resetGame() {
+
+  document.getElementById("startMsg").style.display = "block";
+
+  snake = {
+    x: 160,
+    y: 160,
+    dx: 0,
+    dy: 0,
+    cells: [{ x: 160, y: 160 }],
+    maxCells: 4
+  };
+
+  apple = {
+    x: 320,
+    y: 320
+  };
+
+  count = 0;
+  speed = 6;
+  score = 0;
+  gameRunning = true;
+  paused = false;
+  started = false;
+
+  scoreEl.textContent = 0;
+  gameOverEl.style.display = "none";
+}
+
+
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function loop() {
+  requestAnimationFrame(loop);
+
+  if (!started) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // maçã
+    ctx.fillStyle = "red";
+    ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+
+    // cobra parada
+    ctx.fillStyle = "#0f0";
+    ctx.fillRect(snake.x, snake.y, grid - 1, grid - 1);
+
+    return;
+  }
+
+  if (!gameRunning || paused) return;
+
+  if (++count < speed) return;
+  count = 0;
+
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  snake.x += snake.dx;
+  snake.y += snake.dy;
+
+  // parede
+  if (
+    snake.x < 0 || snake.x >= canvas.width ||
+    snake.y < 0 || snake.y >= canvas.height
+  ) {
+    gameOver();
+  }
+
+  snake.cells.unshift({x: snake.x, y: snake.y});
+  if (snake.cells.length > snake.maxCells) {
+    snake.cells.pop();
+  }
+
+  // maçã
+  ctx.fillStyle = "red";
+  ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+
+  // cobra
+  ctx.fillStyle = "#0f0";
+  snake.cells.forEach((cell, index) => {
+    ctx.fillRect(cell.x, cell.y, grid - 1, grid - 1);
+
+    // comer
+    if (cell.x === apple.x && cell.y === apple.y) {
+      snake.maxCells++;
+      score++;
+      scoreEl.textContent = score;
+
+      beep();
+
+      // aumenta velocidade
+      //if (speed > 2) speed--;
+	  
+	  // aumenta velocidade devagar
+	  speed = Math.max(3, 6 - Math.floor(score / 5));
+
+      apple.x = getRandomInt(0, 20) * grid;
+      apple.y = getRandomInt(0, 20) * grid;
+    }
+
+    // colisão corpo
+    for (let i = index + 1; i < snake.cells.length; i++) {
+      if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+        gameOver();
+      }
+    }
+  });
+}
+
+document.addEventListener("touchmove", function(e) {
+  e.preventDefault();
+}, { passive: false });
+
+function gameOver() {
+  gameRunning = false;
+
+  // salva recorde
+  if (score > highscore) {
+    highscore = score;
+    localStorage.setItem("snakeHigh", highscore);
+    highEl.textContent = highscore;
+  }
+
+  gameOverEl.style.display = "block";
+}
+
+// teclado
+document.addEventListener("keydown", (e) => {
+
+  if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
+    e.preventDefault();
+  }
+  
+  // ⏸️ PAUSE COM ESPAÇO
+  if (e.code === "Space") {
+    e.preventDefault();
+    paused = !paused;
+    pauseMsg.style.display = paused ? "block" : "none";
+  }
+
+  if (!gameRunning && e.key === "Enter") {
+    resetGame();
+    return;
+  }
+
+  handleDirection(e.key);
+});
+
+// mobile
+function setDirection(dir) {
+  if (!gameRunning) {
+    resetGame();
+    return;
+  }
+
+  const map = {
+    up: "ArrowUp",
+    down: "ArrowDown",
+    left: "ArrowLeft",
+    right: "ArrowRight"
+  };
+
+  handleDirection(map[dir]);
+}
+
+function handleDirection(key) {
+
+  started = true;
+  document.getElementById("startMsg").style.display = "none";
+
+  if (key === "ArrowLeft" && snake.dx !== grid) {
+    snake.dx = -grid;
+    snake.dy = 0;
+  }
+  else if (key === "ArrowUp" && snake.dy !== grid) {
+    snake.dx = 0;
+    snake.dy = -grid;
+  }
+  else if (key === "ArrowRight" && snake.dx !== -grid) {
+    snake.dx = grid;
+    snake.dy = 0;
+  }
+  else if (key === "ArrowDown" && snake.dy !== -grid) {
+    snake.dx = 0;
+    snake.dy = grid;
+  }
+}
+
+resetGame();
+requestAnimationFrame(loop);
+</script>
+
+</body>
+</html>
