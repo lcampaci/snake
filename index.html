@@ -96,6 +96,15 @@ button {
 
 <canvas id="game" width="400" height="400"></canvas>
 
+<div id="startMsg" style="
+position:absolute;
+top:45%;
+font-size:22px;
+color:#0f0;
+">
+Pressione alguma seta para começar
+</div>
+
 <div id="gameOver">
   <h2>💀 Game Over</h2>
   <p>Pressione ENTER ou toque para reiniciar</p>
@@ -131,6 +140,7 @@ const grid = 20;
 
 let snake, apple;
 let count, speed, score, gameRunning, paused;
+let started = false;
 
 // 🔊 som simples
 function beep() {
@@ -146,12 +156,15 @@ let highscore = localStorage.getItem("snakeHigh") || 0;
 highEl.textContent = highscore;
 
 function resetGame() {
+
+  document.getElementById("startMsg").style.display = "block";
+
   snake = {
     x: 160,
     y: 160,
-    dx: grid,
+    dx: 0,
     dy: 0,
-    cells: [],
+    cells: [{ x: 160, y: 160 }],
     maxCells: 4
   };
 
@@ -165,6 +178,7 @@ function resetGame() {
   score = 0;
   gameRunning = true;
   paused = false;
+  started = false;
 
   scoreEl.textContent = 0;
   gameOverEl.style.display = "none";
@@ -179,10 +193,25 @@ function getRandomInt(min, max) {
 function loop() {
   requestAnimationFrame(loop);
 
+  if (!started) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // maçã
+    ctx.fillStyle = "red";
+    ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+
+    // cobra parada
+    ctx.fillStyle = "#0f0";
+    ctx.fillRect(snake.x, snake.y, grid - 1, grid - 1);
+
+    return;
+  }
+
   if (!gameRunning || paused) return;
 
   if (++count < speed) return;
   count = 0;
+
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -295,14 +324,25 @@ function setDirection(dir) {
 }
 
 function handleDirection(key) {
-  if (key === "ArrowLeft" && snake.dx === 0) {
-    snake.dx = -grid; snake.dy = 0;
-  } else if (key === "ArrowUp" && snake.dy === 0) {
-    snake.dy = -grid; snake.dx = 0;
-  } else if (key === "ArrowRight" && snake.dx === 0) {
-    snake.dx = grid; snake.dy = 0;
-  } else if (key === "ArrowDown" && snake.dy === 0) {
-    snake.dy = grid; snake.dx = 0;
+
+  started = true;
+  document.getElementById("startMsg").style.display = "none";
+
+  if (key === "ArrowLeft" && snake.dx !== grid) {
+    snake.dx = -grid;
+    snake.dy = 0;
+  }
+  else if (key === "ArrowUp" && snake.dy !== grid) {
+    snake.dx = 0;
+    snake.dy = -grid;
+  }
+  else if (key === "ArrowRight" && snake.dx !== -grid) {
+    snake.dx = grid;
+    snake.dy = 0;
+  }
+  else if (key === "ArrowDown" && snake.dy !== -grid) {
+    snake.dx = 0;
+    snake.dy = grid;
   }
 }
 
