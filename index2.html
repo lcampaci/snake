@@ -12,118 +12,132 @@ html, body {
 
 body {
   margin: 0;
-  background: #111;
-  color: #0f0;
-  font-family: monospace;
+  background: #008080; /* desktop Windows */
+  font-family: Tahoma, sans-serif;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-
-  /*padding-bottom: 220px;*/ /* espaço pros controles */
-  padding-bottom: 90px;
 }
 
-h1 {
-  margin: 5px 0;
-  font-size: 24px;
+/* Janela */
+.window {
+  background: #C0C0C0;
+
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+
+  box-shadow: 2px 2px 0 #000;
+  padding: 3px;
+}
+
+/* Barra de título */
+.titlebar {
+  background: linear-gradient(to right, #000080, #1084d0);
+  color: white;
+  padding: 4px 8px;
+  font-weight: bold;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.title-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.title-buttons div {
+  width: 16px;
+  height: 14px;
+  background: #C0C0C0;
+
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+}
+
+.content {
+  padding: 10px;
 }
 
 canvas {
   background: black;
-  border: 3px solid #0f0;
-  margin-top: 10px;
+  border: 2px inset #808080;
 }
 
-canvas {
-  /*max-width: 95vw;
-  max-height: 60vh;*/
-  max-width: 98vw;
-  max-height: 75vh; /* antes 60vh */
-  touch-action: none;
-  margin-bottom: 20px;
-}
-
-
+/* HUD */
 #hud {
-  margin-top: 10px;
+  margin-bottom: 8px;
+  color: black;
+  font-weight: bold;
 }
 
-#gameOver {
-  position: absolute;
-  top: 40%;
-  text-align: center;
-  display: none;
-}
-
-.controls {
-  position: fixed;
-  bottom: 5px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-
-  pointer-events: auto;
-}
-
+/* Botões */
 button {
-  /*width: 70px;
-  height: 70px;
-  font-size: 24px;
-  margin: 5px;
-  border-radius: 15px;*/
   width: 50px;
   height: 50px;
+
+  background: #C0C0C0;
+  color: black;
+
+  border-top: 2px solid white;
+  border-left: 2px solid white;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+
   font-size: 18px;
-  margin: 2px;
-  border-radius: 8px;
-  background: #222;
-  color: #0f0;
-  border: 2px solid #0f0;
+}
+
+button:active {
+  border-top: 2px solid #404040;
+  border-left: 2px solid #404040;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+}
+
+/* Barra de status */
+.statusbar {
+  margin-top: 5px;
+  background: #C0C0C0;
+  border: 1px inset #808080;
+  padding: 3px;
+  font-size: 12px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🐍 Snake PRO+</h1>
+<div class="window">
 
-<div id="hud">
-  Score: <span id="score">0</span> |
-  Recorde: <span id="highscore">0</span>
-</div>
+  <div class="titlebar">
+    <span>Snake PRO+ v96</span>
 
-<canvas id="game" width="400" height="400"></canvas>
-
-<div id="startMsg" style="
-position:absolute;
-top:45%;
-font-size:22px;
-color:#0f0;
-">
-Pressione alguma seta para começar
-</div>
-
-<div id="gameOver">
-  <h2>💀 Game Over</h2>
-  <p>Pressione ENTER ou toque para reiniciar</p>
-</div>
-
-<div id="pauseMsg" style="display:none; position:absolute; top:45%;">
-  <h2>⏸️ PAUSADO</h2>
-</div>
-
-<!-- Controles mobile -->
-<div class="controls">
-  <div>
-    <button ontouchstart="setDirection('up')" onclick="setDirection('up')">⬆️</button>
+    <div class="title-buttons">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
   </div>
-  <div>
-    <button ontouchstart="setDirection('left')" onclick="setDirection('left')">⬅️</button>
-    <button ontouchstart="setDirection('down')" onclick="setDirection('down')">⬇️</button>
-    <button ontouchstart="setDirection('right')" onclick="setDirection('right')">➡️</button>
+
+  <div class="content">
+
+    <div id="hud">
+      Score: <span id="score">0</span> |
+      Recorde: <span id="highscore">0</span>
+    </div>
+
+    <canvas id="game" width="400" height="400"></canvas>
+
+    <div class="statusbar">
+      Pronto | Espaço = Pause | Enter = Reiniciar
+    </div>
+
   </div>
+
 </div>
 
 <script>
