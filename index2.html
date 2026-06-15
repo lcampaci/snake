@@ -3,11 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Snake PRO+ v96</title>
-
 <style>
-
 html, body{
     height:100%;
     margin:0;
@@ -216,7 +213,7 @@ button:active{
         <button onclick="setDirection('right')">➡️</button>
     </div>
 </div>
-<canvas id="game" width="400" height="400"></canvas>
+
 <script>
 
 const canvas = document.getElementById("game");
@@ -247,8 +244,8 @@ let started = false;
 function beep(){
 
     const audioCtx =
-        new(window.AudioContext ||
-        window.webkitAudioContext)();
+    new (window.AudioContext ||
+    window.webkitAudioContext)();
 
     const osc = audioCtx.createOscillator();
 
@@ -392,14 +389,14 @@ function loop(){
     snake.y += snake.dy;
 
     if(
-        snake.x < 0 ||
-        snake.y < 0 ||
-        snake.x >= canvas.width ||
-        snake.y >= canvas.height
-    ){
-        gameOver();
-    }
-
+    snake.x < 0 ||
+    snake.y < 0 ||
+    snake.x >= canvas.width ||
+    snake.y >= canvas.height
+){
+    gameOver();
+    return;
+}
     snake.cells.unshift({
         x:snake.x,
         y:snake.y
@@ -455,13 +452,14 @@ function loop(){
                 6 - Math.floor(score/5)
             );
 
-            apple.x =
-                getRandomInt(0,20)
-                * grid;
-
-            apple.y =
-                getRandomInt(0,20)
-                * grid;
+           do {
+    apple.x = getRandomInt(0,20) * grid;
+    apple.y = getRandomInt(0,20) * grid;
+} while (
+    snake.cells.some(
+        c => c.x === apple.x && c.y === apple.y
+    )
+);
         }
 
         for(
@@ -499,11 +497,9 @@ document.addEventListener(
             e.preventDefault();
         }
 
-        if(e.code==="Space"){
-
-            e.preventDefault();
-
-            paused = !paused;
+       if(e.code==="Space" && started){
+    paused = !paused;
+}
 
             pauseMsg.style.display =
                 paused
@@ -584,6 +580,5 @@ resetGame();
 requestAnimationFrame(loop);
 
 </script>
-
 </body>
 </html>
