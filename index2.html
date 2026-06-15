@@ -241,11 +241,11 @@ let started = false;
 
 /* SOM */
 
-function beep(){
-
-    const audioCtx =
+const audioCtx =
     new (window.AudioContext ||
     window.webkitAudioContext)();
+
+function beep(){
 
     const osc = audioCtx.createOscillator();
 
@@ -497,24 +497,22 @@ document.addEventListener(
             e.preventDefault();
         }
 
-       if(e.code==="Space" && started){
+      if(e.code==="Space" && started){
     paused = !paused;
 }
 
-            pauseMsg.style.display =
-                paused
-                ? "block"
-                : "none";
-        }
+if(gameRunning){
+    pauseMsg.style.display =
+        paused ? "block" : "none";
+}
 
-        if(
-            !gameRunning &&
-            e.key==="Enter"
-        ){
-            resetGame();
-            return;
-        }
-
+if(
+    !gameRunning &&
+    e.key==="Enter"
+){
+    resetGame();
+    return;
+}
         handleDirection(e.key);
     }
 );
@@ -538,10 +536,19 @@ function setDirection(dir){
 
 function handleDirection(key){
 
-    started = true;
+    if(
+        ![
+            "ArrowLeft",
+            "ArrowRight",
+            "ArrowUp",
+            "ArrowDown"
+        ].includes(key)
+    ){
+        return;
+    }
 
-    startMsg.style.display =
-        "none";
+    started = true;
+    startMsg.style.display = "none";
 
     if(
         key==="ArrowLeft" &&
